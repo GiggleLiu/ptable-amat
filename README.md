@@ -10,7 +10,7 @@ A Typst package for rendering periodic tables of elements with two style options
 ## Installation
 
 ```typst
-#import "@preview/periodic-table:0.1.0": periodic-table, periodic-table-detailed
+#import "@preview/ptable-amat:0.1.0": periodic-table, periodic-table-detailed
 ```
 
 Or for local use:
