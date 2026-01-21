@@ -58,15 +58,48 @@ With custom parameters:
 | `length` | `0.8cm` | Base length unit for the canvas |
 | `size` | `1.0` (compact) / `1.8` (detailed) | Size of each element box |
 | `gap` | `0.1` (compact) / `0.15` (detailed) | Gap between element boxes |
+| `theme` | `"bright"` (compact) / `"dark"` (detailed) | Color theme (see below) |
 | `show-legend` | `true` | Whether to show the category legend |
 | `highlighted` | `()` | Array of atomic numbers to highlight |
-| `highlight-stroke` | `luma(20%) + 3pt` | Stroke style for highlighted elements (dark gray) |
+| `highlight-stroke` | `luma(20%) + 3pt` | Stroke style for highlighted elements |
 
 ### Function-Specific Parameters
 
 | Function | Parameter | Default | Description |
 |----------|-----------|---------|-------------|
 | `periodic-table-detailed` | `show-labels` | `true` | Whether to show group/period labels |
+
+## Color Themes
+
+Five built-in color themes are available:
+
+| Theme | Description |
+|-------|-------------|
+| `"bright"` | Light colors with black text (good for printing) |
+| `"dark"` | Dark colors with white text (professional look) |
+| `"pastel"` | Soft muted colors |
+| `"grayscale"` | Grayscale only (for B&W printing) |
+| `"neon"` | Vibrant neon colors |
+
+### Theme Examples
+
+```typst
+#periodic-table(theme: "pastel")
+```
+
+![Pastel theme](images/theme-pastel.png)
+
+```typst
+#periodic-table(theme: "neon")
+```
+
+![Neon theme](images/theme-neon.png)
+
+```typst
+#periodic-table(theme: "grayscale")
+```
+
+![Grayscale theme](images/theme-grayscale.png)
 
 ### Highlighting Elements
 
@@ -102,6 +135,8 @@ You can highlight specific elements by passing their atomic numbers:
 
 - All 118 elements with atomic numbers, symbols, names, and atomic masses
 - Color-coded by element category (alkali metals, noble gases, etc.)
+- Five color themes: bright, dark, pastel, grayscale, neon
+- Customizable element highlighting
 - Standard periodic table layout with lanthanoids and actinoids separated
 - Built on the `cetz` package for high-quality vector graphics
 
