@@ -1,10 +1,10 @@
-.PHONY: all test test-logic test-compact test-detailed images clean
+.PHONY: all test test-logic test-compact test-detailed test-options images clean
 
 TYPST = typst compile --root .
 
 all: test
 
-test: test-logic test-compact test-detailed
+test: test-logic test-compact test-detailed test-options
 	@echo "All tests passed!"
 
 test-logic:
@@ -21,6 +21,11 @@ test-detailed:
 	@echo "Running detailed table test..."
 	@$(TYPST) tests/test-detailed.typ tests/test-detailed.pdf
 	@echo "Detailed table test passed!"
+
+test-options:
+	@echo "Running options test..."
+	@$(TYPST) tests/test-options.typ tests/test-options.pdf
+	@echo "Options test passed!"
 
 images:
 	@echo "Generating images..."

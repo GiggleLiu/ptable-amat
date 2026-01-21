@@ -191,13 +191,23 @@
   else { (0, 0) }
 }
 
+// First row for each group column (0-indexed column -> first row with element)
+#let group-first-row(col) = {
+  if col == 0 { 0 }        // Group 1: H
+  else if col == 1 { 1 }   // Group 2: Be
+  else if col <= 11 { 3 }  // Groups 3-12: Sc-Zn
+  else if col <= 16 { 1 }  // Groups 13-17: B-F row
+  else { 0 }               // Group 18: He
+}
+
 // Element box function for periodic table (compact version)
-#let pt-element(x, y, number, symbol, mass, fill-color: white, size: 1.0, gap: 0.1) = {
+#let pt-element(x, y, number, symbol, mass, fill-color: white, size: 1.0, gap: 0.1, highlighted: false, highlight-stroke: red + 2pt) = {
   import draw: *
   let s = size
+  let stroke-style = if highlighted { highlight-stroke } else { black + 0.3pt }
   group({
     translate((x * (size + gap), -y * (size + gap)))
-    rect((0, 0), (s, s), fill: fill-color, stroke: black + 0.3pt)
+    rect((0, 0), (s, s), fill: fill-color, stroke: stroke-style)
     content((0.1 * s, 0.85 * s), text(5pt)[#number], anchor: "west")
     content((0.5 * s, 0.5 * s), text(10pt, weight: "bold")[#symbol])
     content((0.5 * s, 0.15 * s), text(5.5pt)[#mass])
@@ -205,12 +215,13 @@
 }
 
 // Professional element box with all details (ACS style)
-#let pt-element-detailed(x, y, number, symbol, name, mass, fill-color: white, size: 1.8, gap: 0.15) = {
+#let pt-element-detailed(x, y, number, symbol, name, mass, fill-color: white, size: 1.8, gap: 0.15, highlighted: false, highlight-stroke: red + 2pt) = {
   import draw: *
   let s = size
+  let stroke-style = if highlighted { highlight-stroke } else { black + 0.5pt }
   group({
     translate((x * (size + gap), -y * (size + gap)))
-    rect((0, 0), (s, s), fill: fill-color, stroke: black + 0.5pt)
+    rect((0, 0), (s, s), fill: fill-color, stroke: stroke-style)
     // Atomic number (top left)
     content((0.12 * s, 0.88 * s), text(7pt, fill: white, weight: "bold")[#number], anchor: "west")
     // Symbol (center, large)
@@ -227,8 +238,20 @@
 /// - length (length): The base length unit for the canvas (default: 0.8cm)
 /// - size (float): The size of each element box (default: 1.0)
 /// - gap (float): The gap between element boxes (default: 0.1)
+/// - show-title (bool): Whether to show the title (default: true)
+/// - show-legend (bool): Whether to show the category legend (default: true)
+/// - highlighted (array): Array of atomic numbers to highlight (default: ())
+/// - highlight-stroke (stroke): Stroke style for highlighted elements (default: red + 2pt)
 /// -> content
-#let periodic-table(length: 0.8cm, size: 1.0, gap: 0.1) = canvas(length: length, {
+#let periodic-table(
+  length: 0.8cm,
+  size: 1.0,
+  gap: 0.1,
+  show-title: true,
+  show-legend: true,
+  highlighted: (),
+  highlight-stroke: red + 2pt,
+) = canvas(length: length, {
   import draw: *
 
   // Draw all elements
@@ -236,31 +259,36 @@
     let (z, sym, name, mass, cat) = elem
     let (col, row) = element-position(z)
     let color = category-color-light(cat)
-    pt-element(col, row, z, sym, mass, fill-color: color, size: size, gap: gap)
+    let is-highlighted = z in highlighted
+    pt-element(col, row, z, sym, mass, fill-color: color, size: size, gap: gap, highlighted: is-highlighted, highlight-stroke: highlight-stroke)
   }
 
   // Title
-  content((9, 2.5), text(14pt, weight: "bold")[Periodic Table of Elements])
+  if show-title {
+    content((10, 2.5), text(14pt, weight: "bold")[Periodic Table of Elements])
+  }
 
   // Legend at top with 2 columns
-  let legend-y = 1.5
-  let legend-items = (
-    ("Alkali Metals", "alkali"),
-    ("Alkaline Earth Metals", "alkaline"),
-    ("Transition Metals", "transition"),
-    ("Other Metals", "post-transition"),
-    ("Metalloids", "metalloid"),
-    ("Non-metals", "nonmetal"),
-    ("Halogens", "halogen"),
-    ("Noble Gases", "noble"),
-    ("Lanthanoids", "lanthanoid"),
-    ("Actinoids", "actinoid"),
-  )
-  for (i, (label, cat)) in legend-items.enumerate() {
-    let lx = calc.rem(i, 2) * 5 + 3  // 2 columns
-    let ly = legend-y - calc.floor(i / 2) * 0.6
-    rect((lx, ly), (lx + 0.5, ly - 0.5), fill: category-color-light(cat), stroke: black + 0.3pt)
-    content((lx + 0.7, ly - 0.25), text(8pt)[#label], anchor: "west")
+  if show-legend {
+    let legend-y = 1.5
+    let legend-items = (
+      ("Alkali Metals", "alkali"),
+      ("Alkaline Earth Metals", "alkaline"),
+      ("Transition Metals", "transition"),
+      ("Other Metals", "post-transition"),
+      ("Metalloids", "metalloid"),
+      ("Non-metals", "nonmetal"),
+      ("Halogens", "halogen"),
+      ("Noble Gases", "noble"),
+      ("Lanthanoids", "lanthanoid"),
+      ("Actinoids", "actinoid"),
+    )
+    for (i, (label, cat)) in legend-items.enumerate() {
+      let lx = calc.rem(i, 2) * 5 + 3  // 2 columns
+      let ly = legend-y - calc.floor(i / 2) * 0.6
+      rect((lx, ly), (lx + 0.5, ly - 0.5), fill: category-color-light(cat), stroke: black + 0.3pt)
+      content((lx + 0.7, ly - 0.25), text(8pt)[#label], anchor: "west")
+    }
   }
 })
 
@@ -269,8 +297,22 @@
 /// - length (length): The base length unit for the canvas (default: 0.8cm)
 /// - size (float): The size of each element box (default: 1.8)
 /// - gap (float): The gap between element boxes (default: 0.15)
+/// - show-title (bool): Whether to show the title (default: false)
+/// - show-labels (bool): Whether to show group/period labels (default: true)
+/// - show-legend (bool): Whether to show the category legend (default: true)
+/// - highlighted (array): Array of atomic numbers to highlight (default: ())
+/// - highlight-stroke (stroke): Stroke style for highlighted elements (default: red + 2pt)
 /// -> content
-#let periodic-table-detailed(length: 0.8cm, size: 1.8, gap: 0.15) = canvas(length: length, {
+#let periodic-table-detailed(
+  length: 0.8cm,
+  size: 1.8,
+  gap: 0.15,
+  show-title: true,
+  show-labels: true,
+  show-legend: true,
+  highlighted: (),
+  highlight-stroke: red + 2pt,
+) = canvas(length: length, {
   import draw: *
 
   // Draw all elements with detailed boxes
@@ -278,70 +320,84 @@
     let (z, sym, name, mass, cat) = elem
     let (col, row) = element-position(z)
     let color = category-color(cat)
-    pt-element-detailed(col, row, z, sym, name, mass, fill-color: color, size: size, gap: gap)
+    let is-highlighted = z in highlighted
+    pt-element-detailed(col, row, z, sym, name, mass, fill-color: color, size: size, gap: gap, highlighted: is-highlighted, highlight-stroke: highlight-stroke)
   }
 
-  // Group numbers (1-18) at top
-  for g in range(1, 19) {
-    let col = g - 1
-    let x = col * (size + gap)
-    let y = 1.2
-    content((x + size/2, y + 1), text(9pt, weight: "bold")[#g])
-  }
-  content((1, 2.8), text(8pt, weight: "bold")[GROUP])
-
-  // Period numbers (1-7) on left
-  for p in range(1, 8) {
-    let row = p - 1
-    let y = -row * (size + gap)
-    let x = -0.8
-    content((x, y + size/2), text(9pt, weight: "bold")[#p])
+  // Title
+  if show-title {
+    content((9 * (size + gap), 2.5), text(14pt, weight: "bold")[Periodic Table of Elements])
   }
 
-  // PERIOD label (vertical) - rotate as a whole
-  content((-1.5, -3 * (size + gap) + 1), angle: 90deg, text(8pt, weight: "bold")[PERIOD])
+  // Group and period labels
+  if show-labels {
+    // Group numbers (1-18) positioned above first element in each column
+    for g in range(1, 19) {
+      let col = g - 1
+      let first-row = group-first-row(col)
+      let x = col * (size + gap)
+      let y = -first-row * (size + gap) + size + 0.3
+      content((x + size/2, y), text(9pt, weight: "bold")[#g])
+    }
 
-  // Legend box (example element) - keep at right side
-  let legend-x = 16
-  let legend-y = 0.3
-  let legend-size = size * 1.2
-  rect((legend-x, legend-y), (legend-x + legend-size, legend-y - legend-size),
-       fill: rgb("#e67700"), stroke: black + 0.5pt)
-  content((legend-x + 0.12 * legend-size, legend-y - 0.12 * legend-size),
-          text(7pt, weight: "bold", fill: white)[78], anchor: "west")
-  content((legend-x + legend-size/2, legend-y - 0.45 * legend-size),
-          text(16pt, weight: "bold", fill: white)[Pt])
-  content((legend-x + legend-size/2, legend-y - 0.68 * legend-size),
-          text(6pt, fill: white)[Platinum])
-  content((legend-x + legend-size/2, legend-y - 0.88 * legend-size),
-          text(7pt, fill: white)[195.1])
+    // GROUP label
+    content((0.8, size + 0.8), text(8pt, weight: "bold")[GROUP])
 
-  // Legend labels - moved to top right
-  let label-x = legend-x + legend-size + 0.3
-  content((label-x, legend-y - 0.12 * legend-size), text(7pt)[Atomic Number], anchor: "west")
-  content((label-x, legend-y - 0.45 * legend-size), text(7pt)[Symbol], anchor: "west")
-  content((label-x, legend-y - 0.68 * legend-size), text(7pt)[Name], anchor: "west")
-  content((label-x, legend-y - 0.88 * legend-size), text(7pt)[Average Atomic Mass], anchor: "west")
+    // Period numbers (1-7) on left
+    for p in range(1, 8) {
+      let row = p - 1
+      let y = -row * (size + gap)
+      let x = -0.5
+      content((x, y + size/2), text(9pt, weight: "bold")[#p])
+    }
 
-  // Category legend - moved to top, alongside Pt box
-  let cat-legend-y = 1.0
-  let legend-items = (
-    ("Alkali Metals", "alkali"),
-    ("Alkaline Earth Metals", "alkaline"),
-    ("Transition Metals", "transition"),
-    ("Other Metals", "post-transition"),
-    ("Metalloids", "metalloid"),
-    ("Non-metals", "nonmetal"),
-    ("Halogens", "halogen"),
-    ("Noble Gases", "noble"),
-    ("Lanthanoids", "lanthanoid"),
-    ("Actinoids", "actinoid"),
-  )
-  // Category legend with 2 columns at top
-  for (i, (label, cat)) in legend-items.enumerate() {
-    let lx = calc.rem(i, 2) * 5.5 + 5  // 2 columns
-    let ly = cat-legend-y - calc.floor(i / 2) * 0.7
-    rect((lx, ly), (lx + 0.6, ly - 0.6), fill: category-color(cat), stroke: black + 0.4pt)
-    content((lx + 0.8, ly - 0.3), text(8pt)[#label], anchor: "west")
+    // PERIOD label (vertical)
+    content((-1.2, -3 * (size + gap) + size/2), angle: 90deg, text(8pt, weight: "bold")[PERIOD])
+  }
+
+  if show-legend {
+    // Legend box (example element) - keep at right side
+    let legend-x = 16
+    let legend-y = 0.3
+    let legend-size = size * 1.2
+    rect((legend-x, legend-y), (legend-x + legend-size, legend-y - legend-size),
+         fill: rgb("#e67700"), stroke: black + 0.5pt)
+    content((legend-x + 0.12 * legend-size, legend-y - 0.12 * legend-size),
+            text(7pt, weight: "bold", fill: white)[78], anchor: "west")
+    content((legend-x + legend-size/2, legend-y - 0.45 * legend-size),
+            text(16pt, weight: "bold", fill: white)[Pt])
+    content((legend-x + legend-size/2, legend-y - 0.68 * legend-size),
+            text(6pt, fill: white)[Platinum])
+    content((legend-x + legend-size/2, legend-y - 0.88 * legend-size),
+            text(7pt, fill: white)[195.1])
+
+    // Legend labels - moved to top right
+    let label-x = legend-x + legend-size + 0.3
+    content((label-x, legend-y - 0.12 * legend-size), text(7pt)[Atomic Number], anchor: "west")
+    content((label-x, legend-y - 0.45 * legend-size), text(7pt)[Symbol], anchor: "west")
+    content((label-x, legend-y - 0.68 * legend-size), text(7pt)[Name], anchor: "west")
+    content((label-x, legend-y - 0.88 * legend-size), text(7pt)[Average Atomic Mass], anchor: "west")
+
+    // Category legend - moved to top, alongside Pt box
+    let cat-legend-y = 1.0
+    let legend-items = (
+      ("Alkali Metals", "alkali"),
+      ("Alkaline Earth Metals", "alkaline"),
+      ("Transition Metals", "transition"),
+      ("Other Metals", "post-transition"),
+      ("Metalloids", "metalloid"),
+      ("Non-metals", "nonmetal"),
+      ("Halogens", "halogen"),
+      ("Noble Gases", "noble"),
+      ("Lanthanoids", "lanthanoid"),
+      ("Actinoids", "actinoid"),
+    )
+    // Category legend with 2 columns at top
+    for (i, (label, cat)) in legend-items.enumerate() {
+      let lx = calc.rem(i, 2) * 5.5 + 5  // 2 columns
+      let ly = cat-legend-y - calc.floor(i / 2) * 0.7
+      rect((lx, ly), (lx + 0.6, ly - 0.6), fill: category-color(cat), stroke: black + 0.4pt)
+      content((lx + 0.8, ly - 0.3), text(8pt)[#label], anchor: "west")
+    }
   }
 })

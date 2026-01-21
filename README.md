@@ -51,11 +51,43 @@ With custom parameters:
 
 ## Parameters
 
+### Common Parameters
+
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `length` | `0.8cm` | Base length unit for the canvas |
 | `size` | `1.0` (compact) / `1.8` (detailed) | Size of each element box |
 | `gap` | `0.1` (compact) / `0.15` (detailed) | Gap between element boxes |
+| `show-legend` | `true` | Whether to show the category legend |
+| `highlighted` | `()` | Array of atomic numbers to highlight |
+| `highlight-stroke` | `red + 2pt` | Stroke style for highlighted elements |
+
+### Function-Specific Parameters
+
+| Function | Parameter | Default | Description |
+|----------|-----------|---------|-------------|
+| `periodic-table-detailed` | `show-labels` | `true` | Whether to show group/period labels |
+
+### Highlighting Elements
+
+You can highlight specific elements by passing their atomic numbers:
+
+```typst
+// Highlight noble gases
+#periodic-table(highlighted: (2, 10, 18, 36, 54, 86, 118))
+
+// Highlight with custom color
+#periodic-table(
+  highlighted: (26, 27, 28, 29),  // Fe, Co, Ni, Cu
+  highlight-stroke: blue + 3pt
+)
+
+// Minimal compact table without title and legend
+#periodic-table(show-title: false, show-legend: false)
+
+// Minimal detailed table without labels and legend
+#periodic-table-detailed(show-labels: false, show-legend: false)
+```
 
 ## Features
 
