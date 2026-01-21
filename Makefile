@@ -40,6 +40,7 @@ images:
 	@$(TYPST) examples/theme-pastel.typ images/theme-pastel.png
 	@$(TYPST) examples/theme-neon.typ images/theme-neon.png
 	@$(TYPST) examples/theme-grayscale.typ images/theme-grayscale.png
+	@$(TYPST) examples/theme-grayscale-dark.typ images/theme-grayscale-dark.png
 	@echo "Images generated!"
 
 clean:

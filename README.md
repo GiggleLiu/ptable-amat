@@ -78,7 +78,8 @@ Five built-in color themes are available:
 | `"bright"` | Light colors with black text (good for printing) |
 | `"dark"` | Dark colors with white text (professional look) |
 | `"pastel"` | Soft muted colors |
-| `"grayscale"` | Grayscale only (for B&W printing) |
+| `"grayscale"` | Light grays with black text |
+| `"grayscale-dark"` | Dark grays with white text |
 | `"neon"` | Vibrant neon colors |
 
 ### Theme Examples
@@ -100,6 +101,12 @@ Five built-in color themes are available:
 ```
 
 ![Grayscale theme](images/theme-grayscale.png)
+
+```typst
+#periodic-table(theme: "grayscale-dark")
+```
+
+![Grayscale dark theme](images/theme-grayscale-dark.png)
 
 ### Highlighting Elements
 

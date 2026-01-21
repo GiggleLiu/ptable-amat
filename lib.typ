@@ -187,7 +187,7 @@
       actinoid: rgb("#eebefa"),
     ),
   ),
-  // Grayscale theme - for black and white printing
+  // Grayscale bright theme - light grays with black text
   grayscale: (
     text-color: black,
     colors: (
@@ -201,6 +201,22 @@
       noble: luma(95%),
       lanthanoid: luma(55%),
       actinoid: luma(50%),
+    ),
+  ),
+  // Grayscale dark theme - dark grays with white text
+  grayscale-dark: (
+    text-color: white,
+    colors: (
+      alkali: luma(25%),
+      alkaline: luma(30%),
+      transition: luma(35%),
+      post-transition: luma(40%),
+      metalloid: luma(45%),
+      nonmetal: luma(20%),
+      halogen: luma(50%),
+      noble: luma(15%),
+      lanthanoid: luma(55%),
+      actinoid: luma(60%),
     ),
   ),
   // Neon theme - vibrant colors on dark background

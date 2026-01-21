@@ -18,20 +18,25 @@
 
 #pagebreak()
 
-// Test 4: Grayscale theme
+// Test 4: Grayscale theme (bright)
 #periodic-table(theme: "grayscale", show-legend: false)
 
 #pagebreak()
 
-// Test 5: Neon theme
+// Test 5: Grayscale dark theme
+#periodic-table(theme: "grayscale-dark", show-legend: false)
+
+#pagebreak()
+
+// Test 6: Neon theme
 #periodic-table(theme: "neon", show-legend: false)
 
 #pagebreak()
 
-// Test 6: Detailed with pastel theme
+// Test 7: Detailed with pastel theme
 #periodic-table-detailed(theme: "pastel", show-legend: false)
 
 #pagebreak()
 
-// Test 7: Detailed with neon theme
+// Test 8: Detailed with neon theme
 #periodic-table-detailed(theme: "neon", show-legend: false)
