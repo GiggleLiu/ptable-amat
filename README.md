@@ -27,6 +27,8 @@ Or for local use:
 #periodic-table()
 ```
 
+![Compact periodic table](images/compact.png)
+
 With custom parameters:
 
 ```typst
@@ -38,6 +40,8 @@ With custom parameters:
 ```typst
 #periodic-table-detailed()
 ```
+
+![Detailed periodic table](images/detailed.png)
 
 With custom parameters:
 

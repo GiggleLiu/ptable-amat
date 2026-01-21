@@ -1,4 +1,4 @@
-.PHONY: all test test-logic test-compact test-detailed clean
+.PHONY: all test test-logic test-compact test-detailed images clean
 
 TYPST = typst compile --root .
 
@@ -21,6 +21,12 @@ test-detailed:
 	@echo "Running detailed table test..."
 	@$(TYPST) tests/test-detailed.typ tests/test-detailed.pdf
 	@echo "Detailed table test passed!"
+
+images:
+	@echo "Generating images..."
+	@$(TYPST) examples/compact.typ images/compact.png
+	@$(TYPST) examples/detailed.typ images/detailed.png
+	@echo "Images generated!"
 
 clean:
 	rm -f tests/*.pdf
